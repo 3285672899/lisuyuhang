@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lisuyuhang - 访问验证</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h1 {
+            color: #3a4a6d;
+            margin-bottom: 25px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4a6baf;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3a5a9f;
+        }
+        .forgot-password {
+            color: #666;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 300px;
+        }
+        .tab {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            background: #eee;
+            border: none;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: #4a6baf;
+            color: white;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success {
+            color: green;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lisuyuhang</h1>
+        <input type="password" id="passwordInput" placeholder="请输入密码">
+        <button onclick="checkPassword()">进入</button>
+        <p id="errorMsg" class="error"></p>
+        <p class="forgot-password" onclick="openModal()">忘记密码？</p>
+    </div>
+
+    <!-- 忘记密码模态框 -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab('recoverTab')">找回密码</button>
+                <button class="tab-btn" onclick="openTab('changeTab')">修改密码</button>
+            </div>
+            
+            <div id="recoverTab" class="tab active">
+                <p>系统将发送密码到您的邮箱：3285672899@qq.com</p>
+                <button onclick="sendPassword()">发送密码</button>
+                <p id="recoverStatus"></p>
+            </div>
+            
+            <div id="changeTab" class="tab">
+                <input type="password" id="currentPassword" placeholder="当前密码">
+                <input type="password" id="newPassword" placeholder="新密码">
+                <input type="password" id="confirmPassword" placeholder="确认新密码">
+                <button onclick="changePassword()">修改密码</button>
+                <p id="changeStatus"></p>
+            </div>
+            
+            <button style="margin-top: 15px; background: #ccc; color: #333;" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 初始密码
+        let currentPassword = "miaomiao";
+        // 目标GitHub页面
+        const TARGET_URL = "https://github.com/3285672899/lisuyuhang/blob/main/README.md";
+        
+        // 检查密码
+        function checkPassword() {
+            const input = document.getElementById("passwordInput").value;
+            const errorMsg = document.getElementById("errorMsg");
+            
+            if (input === currentPassword) {
+                errorMsg.textContent = "";
+                // 直接跳转，不显示提示
+                window.location.href = TARGET_URL;
+            } else {
+                errorMsg.textContent = "密码错误，请重试！";
+            }
+        }
+        
+        // 打开忘记密码模态框
+        function openModal() {
+            document.getElementById("passwordModal").style.display = "flex";
+            openTab('recoverTab');
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById("passwordModal").style.display = "none";
+        }
+        
+        // 切换标签页
+        function openTab(tabName) {
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+        
+        // 发送密码到邮箱（模拟）
+        function sendPassword() {
+            const recoverStatus = document.getElementById("recoverStatus");
+            recoverStatus.textContent = "密码已发送至 3285672899@qq.com";
+            recoverStatus.className = "success";
+            
+            // 模拟发送邮件（实际应用中需要后端支持）
+            console.log("发送密码到邮箱: 3285672899@qq.com，密码是: " + currentPassword);
+            
+            // 3秒后自动关闭
+            setTimeout(() => {
+                closeModal();
+                recoverStatus.textContent = "";
+            }, 3000);
+        }
+        
+        // 修改密码
+        function changePassword() {
+            const current = document.getElementById("currentPassword").value;
+            const newPwd = document.getElementById("newPassword").value;
+            const confirmPwd = document.getElementById("confirmPassword").value;
+            const changeStatus = document.getElementById("changeStatus");
+            
+            if (current !== currentPassword) {
+                changeStatus.textContent = "当前密码错误！";
+                changeStatus.className = "error";
+                return;
+            }
+            
+            if (newPwd !== confirmPwd) {
+                changeStatus.textContent = "两次输入的新密码不一致！";
+                changeStatus.className = "error";
+                return;
+            }
+            
+            if (newPwd.length < 6) {
+                changeStatus.textContent = "密码长度不能少于6位！";
+                changeStatus.className = "error";
+                return;
+            }
+            
+            currentPassword = newPwd;
+            changeStatus.textContent = "密码修改成功！";
+            changeStatus.className = "success";
+            
+            // 清空输入框
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("confirmPassword").value = "";
+            
+            // 3秒后自动关闭
+            setTimeout(() => {
+                closeModal();
+                changeStatus.textContent = "";
+            }, 3000);
+        }
+        
+        // 按回车键检查密码
+        document.getElementById("passwordInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
